@@ -85,6 +85,7 @@ public let kAppleFrameworks = [
   "CoreVideo",
   "CoreWLAN",
   "CoreAudioKit",
+  "CoreLocation",
   "CoreLocationUI",
   "CreateML",
   "Create",
