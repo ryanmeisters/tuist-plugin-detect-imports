@@ -21,7 +21,7 @@ public let kAppleFrameworks = [
   "AdServices",
   "AdSupport",
   "AGL",
-  "AppClips",
+  "AppClip",
   "AppIntents",
   "AppKit",
   "Apple",
