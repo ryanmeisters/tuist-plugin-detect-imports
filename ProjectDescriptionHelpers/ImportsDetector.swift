@@ -48,7 +48,9 @@ public final class ImportsDetector {
       }
 
       // Stop searching at first non-import line
-      if !cleanLine.hasPrefix("import"), !cleanLine.hasPrefix("@testable import") {
+      if !cleanLine.hasPrefix("import"), 
+        !cleanLine.hasPrefix("@testable import"),
+        !cleanLine.hasPrefix("@preconcurrency import") {
         return results
       }
 
