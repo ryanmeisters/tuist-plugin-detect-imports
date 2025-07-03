@@ -242,6 +242,7 @@ public let kAppleFrameworks = [
   "SystemExtensions",
   "TabletopKit",
   "TabularData",
+  "Testing",
   "ThreadNetwork",
   "TipKit",
   "Translation",
