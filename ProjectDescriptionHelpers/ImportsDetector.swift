@@ -42,8 +42,8 @@ public final class ImportsDetector {
     for line in lineReader {
       let cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
 
-      // Ignore initial comments and empty lines
-      if cleanLine.hasPrefix("/") || cleanLine.count == 0 {
+      // Ignore comments, empty lines, and preprocessor directives
+      if cleanLine.hasPrefix("/") || cleanLine.isEmpty || cleanLine.hasPrefix("#") {
         continue
       }
 
