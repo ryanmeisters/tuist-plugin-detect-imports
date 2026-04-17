@@ -54,7 +54,7 @@ public final class ImportsDetector {
         return results
       }
 
-      if let imported = cleanLine.components(separatedBy: " ").last {
+      if let imported = cleanLine.components(separatedBy: " ").last?.components(separatedBy: ".").first {
         results.insert(imported)
       }
     }
