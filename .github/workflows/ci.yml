@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    name: Unit tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: |
+          xcodebuild test \
+            -project ImportsPlugin.xcodeproj \
+            -scheme ImportsPluginCore \
+            -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+  examples:
+    name: Example projects
+    runs-on: macos-15
+    strategy:
+      matrix:
+        example: [Basic, Advanced]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tuist
+        uses: jdx/mise-action@v2
+
+      - name: Generate project
+        working-directory: Examples/${{ matrix.example }}
+        run: tuist generate --no-open
+
+      - name: Build modules and tests
+        working-directory: Examples/${{ matrix.example }}
+        run: |
+          xcodebuild build-for-testing \
+            -workspace '${{ matrix.example }}.xcworkspace' \
+            -scheme '${{ matrix.example }}-Workspace' \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
