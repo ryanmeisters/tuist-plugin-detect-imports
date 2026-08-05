@@ -4,7 +4,7 @@
 
 A [Tuist](https://tuist.dev) plugin that generates target dependencies from the `import` statements in your source files.
 
-Your Swift files already declare what they depend on — this plugin reads those declarations at `tuist generate` time, so you never hand-maintain a `dependencies:` array again. Add `import SomeModule` to a file and the dependency shows up in your project on the next generate.
+Your Swift files already declare what they depend on. This plugin reads those declarations at `tuist generate` time, so you never hand-maintain a dependencies array again. Add `import SomeModule` to a file and the dependency shows up in your project on the next generate.
 
 ## Installation
 
@@ -25,12 +25,15 @@ let config = Config(
 )
 ```
 
+> [!NOTE]
+> This plugin doesn't publish versioned releases. Pin the latest commit SHA from `main`, and update by bumping the `sha` value.
+
 ## Usage
 
 The plugin exposes two helpers to your manifests:
 
-- **`ImportsDetector.getImports(at:exclude:)`** — recursively scans a directory for `.swift` files and returns the set of imported module names.
-- **`kAppleFrameworks`** — a list of Apple system frameworks, useful for deciding whether an import is an SDK framework or an external package.
+- **`ImportsDetector.getImports(at:exclude:)`**: recursively scans a directory for `.swift` files and returns the set of imported module names.
+- **`kAppleFrameworks`**: a list of Apple system frameworks, useful for deciding whether an import is an SDK framework or an external package.
 
 A typical setup maps each detected import to the right kind of `TargetDependency`:
 
@@ -98,17 +101,17 @@ import CoreKit
 import Foundation
 ```
 
-gives the `FeatureA` target a `.target(name: "CoreKit")` dependency and links `Foundation` — no manual bookkeeping.
+gives the `FeatureA` target a `.target(name: "CoreKit")` dependency and links `Foundation`. No manual bookkeeping.
+
+> [!NOTE]
+> Tuist caches manifest results and won't notice changes to your source files on its own. After adding an import for a dependency that isn't already linked (or a new module directory, if you autodetect modules), run `tuist clean manifests` to tell tuist to rerun the manifest files. You may want to make a habit of `tuist clean manifests && tuist generate`. (Don't run a full `tuist clean` or you will have to reinstall dependencies.)
 
 ## Examples
 
 Two complete, working projects live in [`Examples/`](Examples). Each includes a small SwiftUI app target whose dependencies are detected the same way as the modules'.
 
-- [`Examples/Basic`](Examples/Basic) — the setup shown above: modules are listed by hand, dependencies are detected from imports.
-- [`Examples/Advanced`](Examples/Advanced) — modules are autodetected by scanning the `Modules/` directory, so adding a module is just adding a directory. It also shows a realistic module convention: an interface module (`ModuleA`), its implementation (`ModuleAImpl`), shared mocks (`ModuleATestHelpers`), and tests. The app acts as the composition root — the only target that imports `ModuleAImpl`, injecting it into features that only know the interface — and everything is wired purely from import statements.
-
-> [!NOTE]
-> When detecting modules from the filesystem, you'll need to do a `tuist clean manifests` after adding a new module/directory to tell tuist that it should rerun the manifest files. You may want to make a habit of `tuist clean manifests && tuist generate`. (Don't run a full `tuist clean` or you will have to reinstall dependencies.)
+- [`Examples/Basic`](Examples/Basic): the setup shown above, with modules listed by hand and dependencies detected from imports.
+- [`Examples/Advanced`](Examples/Advanced): modules are autodetected by scanning the `Modules/` directory, so adding a module is just adding a directory. It also shows a realistic module convention: an interface module (`ModuleA`), its implementation (`ModuleAImpl`), shared mocks (`ModuleATestHelpers`), and tests. The app acts as the composition root: it is the only target that imports `ModuleAImpl`, injecting it into features that only know the interface. Everything is wired purely from import statements.
 
 Try one out:
 
@@ -127,7 +130,7 @@ tuist generate
 
 Since it stops at the first non-import line, imports need to appear at the top of the file (the standard style) to be detected.
 
-Use the `exclude:` parameter to skip subdirectories by name — for example, embedded test folders:
+Use the `exclude:` parameter to skip subdirectories by name, such as embedded test folders:
 
 ```swift
 ImportsDetector.getImports(at: moduleURL, exclude: ["Tests"])
@@ -136,14 +139,14 @@ ImportsDetector.getImports(at: moduleURL, exclude: ["Tests"])
 ### Tips
 
 - Some importable modules aren't linkable frameworks (e.g. `os`, `ObjectiveC`). Keep a small ignore set and filter those out before mapping to dependencies.
-- `.external` dependencies must be declared in your Tuist package setup as usual — the plugin only detects the import; it doesn't fetch anything.
+- `.external` dependencies must be declared in your Tuist package setup as usual. The plugin only detects the import; it doesn't fetch anything.
 
 ## Development
 
 The detector is developed and tested with the Xcode project at the repo root:
 
-- `ProjectDescriptionHelpers/` — the plugin source that Tuist compiles into your manifests
-- `ImportsPlugin.xcodeproj` — a test harness that builds the same sources as the `ImportsPluginCore` framework, plus unit tests with fixtures
+- `ProjectDescriptionHelpers/`: the plugin source that Tuist compiles into your manifests
+- `ImportsPlugin.xcodeproj`: a test harness that builds the same sources as the `ImportsPluginCore` framework, plus unit tests with fixtures
 
 Run the tests:
 
