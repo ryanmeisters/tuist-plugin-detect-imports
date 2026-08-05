@@ -167,11 +167,9 @@ CI runs the tests and builds both example projects on every PR and push to `main
       </a>
     </td>
     <td align="center">
-      <a href="https://bird.co">
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset=".github/assets/bird-white.svg">
-          <img src=".github/assets/bird-black.svg" width="90" alt="Bird logo">
-        </picture>
+      <a href="https://apps.apple.com/app/id1260842311">
+        <img src=".github/assets/bird.png" width="80" alt="Bird app icon"><br>
+        <b>Bird</b>
       </a>
     </td>
   </tr>
